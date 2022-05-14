@@ -13,13 +13,12 @@ let doWork = function (job, timer, cb) {
 // 刷牙 (3000) -> 吃早餐 (5000) -> 寫功課 (3000)
 
 doWork('刷牙', 3000, function (result) {
+  // 這裡就是刷完牙了
   console.log(result);
-});
-
-doWork('吃早餐', 5000, function (result) {
-  console.log(result);
-});
-
-doWork('寫功課', 3000, function (result) {
-  console.log(result);
+  doWork('吃早餐', 5000, function (result) {
+    console.log(result);
+    doWork('寫功課', 3000, function (result) {
+      console.log(result);
+    });
+  });
 });
