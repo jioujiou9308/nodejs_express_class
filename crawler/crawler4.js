@@ -1,4 +1,5 @@
 // read stock no from mysql database
+// fetch data by stock id
 
 const axios = require('axios');
 
@@ -44,6 +45,11 @@ require('dotenv').config();
   /****************************************** */
 
   /************* map 版本 ************************** */
+  let stockIds = data.map((stock) => {
+    return stock.id;
+  });
+  console.log('stockIds', stockIds);
+
   let mapResult = data.map(async (stock) => {
     let response = await axios.get('https://www.twse.com.tw/exchangeReport/STOCK_DAY', {
       params: {
