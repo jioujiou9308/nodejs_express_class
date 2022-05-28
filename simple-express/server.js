@@ -6,6 +6,23 @@ const app = express();
 
 const path = require('path');
 
+const mysql = require('mysql2');
+require('dotenv').config();
+// 這裡不會像爬蟲那樣，只建立一個連線 (mysql.createConnection)
+// 但是，也不會幫每一個 request 都分別建立連線
+// ----> connection pool
+let pool = mysql
+  .createPool({
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    // 為了 pool 新增的參數
+    connectionLimit: 10,
+  })
+  .promise();
+
 // client - server
 // client send request -------> server
 //                     <------- response
@@ -87,6 +104,32 @@ app.get('/ssr', (req, res, next) => {
   res.render('index', {
     stocks: ['台積電', '長榮', '聯發科'],
   });
+});
+
+// RESTful API
+// 取得 stocks 的列表
+app.get('/stocks', async (req, res, next) => {
+  let [data, fields] = await pool.execute('SELECT * FROM stocks');
+  res.json(data);
+});
+
+// 取得某個股票 id 的資料
+app.get('/stocks/:stockId', async (req, res, next) => {
+  // 取得網址上的參數 req.params
+  // req.params.stockId
+  console.log('get stocks by id', req.params);
+  let [data, fields] = await pool.execute('SELECT * FROM stocks WHERE id = ' + req.params.stockId);
+
+  console.log('query stock by id:', data);
+  // 空資料(查不到資料)有兩種處理方式：
+  // 1. 200OK 就回 []
+  // 2. 回覆 404
+  if (data.length === 0) {
+    // 這裡是 404 範例
+    res.status(404).json(data);
+  } else {
+    res.json(data);
+  }
 });
 
 // 這個中間件在所有路由的後面
