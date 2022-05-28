@@ -20,14 +20,22 @@ const path = require('path');
 // 1. next: 往下一個中間件去
 // 2. response: 結束這次的旅程 (req-res cycle)
 
-// SSR
-// CSR
-
+// express SSR 的做法
 // 設定 express 視圖檔案放在哪裡
 app.set('views', path.join(__dirname, 'views'));
 // 設定 express要用哪一種樣版引擎 (template engine)
 // npm i pug
 app.set('view engine', 'pug');
+
+// express 處理靜態資料
+// 靜態資料: html, css 檔案, javascript 檔案, 圖片, 影音檔...
+// express 少數內建的中間件 static
+// 方法1: 不要指定網址
+app.use(express.static(path.join(__dirname, 'assets')));
+// http://localhost:3001/images/test1.jpg
+// 方法2: 指定網址 aaa
+app.use('/aaa', express.static(path.join(__dirname, 'public')));
+// http://localhost:3001/aaa/images/callback-hell.png
 
 // 一般中間件
 app.use((request, response, next) => {
