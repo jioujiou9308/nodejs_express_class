@@ -4,6 +4,8 @@ const express = require('express');
 // 利用 epxress 來建立一個 express application
 const app = express();
 
+const path = require('path');
+
 // client - server
 // client send request -------> server
 //                     <------- response
@@ -20,6 +22,12 @@ const app = express();
 
 // SSR
 // CSR
+
+// 設定 express 視圖檔案放在哪裡
+app.set('views', path.join(__dirname, 'views'));
+// 設定 express要用哪一種樣版引擎 (template engine)
+// npm i pug
+app.set('view engine', 'pug');
 
 // 一般中間件
 app.use((request, response, next) => {
@@ -63,6 +71,14 @@ app.get('/error', (req, res, next) => {
   // 或是你的 next 裡有任何參數
   next('我是正確的');
   // --> 都會跳去錯誤處理中間件
+});
+
+app.get('/ssr', (req, res, next) => {
+  // 會去 views 檔案夾裡找 index.pug
+  // 第二個參數: 資料物件，會傳到 pug 那邊去，pug 可以直接使用
+  res.render('index', {
+    stocks: ['台積電', '長榮', '聯發科'],
+  });
 });
 
 // 這個中間件在所有路由的後面
