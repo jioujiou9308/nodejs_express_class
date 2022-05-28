@@ -21,13 +21,21 @@ const app = express();
 // 一般中間件
 app.use((request, response, next) => {
   console.log('我是一個沒有用的中間件 AAAA');
-  next();
+
+  // 兩個都有，那會發生什麼事？
+  // 情況 1:
+  // next();
   // response.send('我是中間件');
+
+  // 情況 2:
+  // response.send('我是中間件');
+  // next();
 });
 
 app.use((request, response, next) => {
   console.log('我是一個沒有用的中間件 BBBB');
   next();
+  // return
 });
 
 // HTTP request
@@ -37,6 +45,7 @@ app.get('/', (request, response, next) => {
   console.log('首頁CCC');
   // 送回 response，結束了 request-response cycle
   response.send('首頁');
+  // return
 });
 
 app.get('/about', (request, response, next) => {
