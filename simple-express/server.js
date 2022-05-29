@@ -123,7 +123,7 @@ app.get('/stocks/:stockId', async (req, res, next) => {
   // 取得網址上的參數 req.params
   // req.params.stockId
   console.log('get stocks by id', req.params);
-  let [data, fields] = await pool.execute('SELECT * FROM stocks WHERE id = ' + req.params.stockId);
+  let [data, fields] = await pool.execute('SELECT * FROM stocks WHERE id = ?', [req.params.stockId]);
 
   console.log('query stock by id:', data);
   // 空資料(查不到資料)有兩種處理方式：
