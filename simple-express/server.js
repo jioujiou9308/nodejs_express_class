@@ -13,6 +13,13 @@ app.use(cors());
 require('dotenv').config();
 let pool = require('./utils/db');
 
+// express.urlencoded 要讓 express 認得 req 裡 body 裡面的資料
+// extended: false --> querystring
+// extended: true --> qs
+app.use(express.urlencoded({ extended: true }));
+// 要讓 express 認得 req 裡 json
+app.use(express.json());
+
 // client - server
 // client send request -------> server
 //                     <------- response
@@ -99,6 +106,9 @@ app.get('/ssr', (req, res, next) => {
     stocks: ['台積電', '長榮', '聯發科'],
   });
 });
+
+const AuthRouter = require('./routers/authRouter');
+app.use('/api/auth', AuthRouter);
 
 const StockRouter = require('./routers/stockRouter');
 app.use('/api/stocks', StockRouter);
