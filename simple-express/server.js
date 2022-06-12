@@ -8,7 +8,19 @@ const path = require('path');
 
 // 使用第三方開發的中間件 cors
 const cors = require('cors');
-app.use(cors());
+// 這樣全開，但不包含跨源讀寫 cookie
+// app.use(cors());
+// origin: *
+// 如果想要跨源讀寫 cookie
+app.use(
+  cors({
+    // 為了要讓 browser 在 CORS 的情況下，還是幫我們縙 cookie
+    // 這邊需要把 credentials 設定成 true，而且 origin 不可以是 *
+    // 不然就太恐怖，誰都可以跨源讀寫 cookie
+    origin: ['http://localhost:3000'],
+    credentials: true,
+  })
+);
 
 require('dotenv').config();
 let pool = require('./utils/db');
@@ -52,8 +64,11 @@ app.set('view engine', 'pug');
 app.use(express.static(path.join(__dirname, 'assets')));
 // http://localhost:3001/images/test1.jpg
 // 方法2: 指定網址 aaa
-app.use('/aaa', express.static(path.join(__dirname, 'public')));
-// http://localhost:3001/aaa/images/callback-hell.png
+app.use('/images/members', express.static(path.join(__dirname, 'public', 'members')));
+// http://localhost:3001/images/members  --> public/members
+// http://localhost:3001/images/members/1655003608497.jpg
+//前面是設定網址 ，後面是指地的路徑所以也可以改成
+// public + 'member'
 
 // 一般中間件
 app.use((request, response, next) => {
@@ -112,6 +127,10 @@ app.use('/api/auth', AuthRouter);
 
 const StockRouter = require('./routers/stockRouter');
 app.use('/api/stocks', StockRouter);
+
+//建立會員的router
+const MemberRouter = require('./routers/memberRouter');
+app.use('/api/member', MemberRouter);
 
 // 這個中間件在所有路由的後面
 // 會到這裡，表示前面所有的路由中間件都沒有比到符合的網址
