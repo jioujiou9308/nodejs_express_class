@@ -76,6 +76,7 @@ const Register = () => {
           value={member.name}
           onChange={handleChange}
         />
+      123
       </div>
       <div className="mb-4 text-2xl">
         <label htmlFor="password" className="flex w-16 mb-2">
